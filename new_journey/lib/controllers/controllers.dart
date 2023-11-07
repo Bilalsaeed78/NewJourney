@@ -17,6 +17,7 @@ class AuthController extends GetxController {
     try {
       final UserCredential userCredential = await auth
           .createUserWithEmailAndPassword(email: email, password: password);
+      print(userCredential.user);
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       print(e.code);
