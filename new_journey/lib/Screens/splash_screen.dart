@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:new_journey/Screens/login_screen.dart';
-import 'package:new_journey/routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -33,10 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(
                 height: 20), // Adjust the spacing between the image and text
-            Text(
-              'Your Splash MOOOOSA Text',
-              style: TextStyle(fontSize: 20),
-            ),
+            // Text(
+            //   'Your Splash MOOOOSA Text',
+            //   style: TextStyle(fontSize: 20),
+            // ),
           ],
         ),
       ),

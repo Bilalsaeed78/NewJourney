@@ -23,4 +23,27 @@ class AuthController extends GetxController {
       print(e.code);
     }
   }
+
+  Future<User?> login() async {
+    try {
+      final String email = emailController.text;
+      final String password = passwordController.text;
+
+      final UserCredential userCredential =
+          await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        return userCredential.user;
+      } else {
+        return null;
+      }
+    } on FirebaseAuthException catch (e) {
+      // Handle login error
+      print(e.code);
+      return null;
+    }
+  }
 }
