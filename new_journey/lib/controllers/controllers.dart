@@ -1,49 +1,84 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:new_journey/Screens/login_screen.dart';
+import 'package:new_journey/controllers/api_constants.dart';
+import 'package:new_journey/local/cache_manager.dart';
 
-class AuthController extends GetxController {
+class AuthController extends GetxController with CacheManager {
+  static const String baseUrl = ApiConstants.baseUrl;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController cnicController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController studentCardController = TextEditingController();
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<User?> SignUp(String email, String password) async {
+  Future<void> registerUser({
+    required String name,
+    required String email,
+    required String password,
+    String? cnic,
+    String? phoneNumber,
+  }) async {
+    final url = Uri.parse('$baseUrl/user/register'); // Update with your backend URL
+    print(url);
     try {
-      final UserCredential userCredential = await auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      print(userCredential.user);
-      return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      print(e.code);
+   print("here");
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'cnic': cnic,
+          'phoneNumber': phoneNumber,
+        }),
+          headers: {
+      'Content-Type': 'application/json',
+      }, 
+      encoding: Encoding.getByName('utf-8'),
+      );
+print("here");
+      if (response.statusCode == 201) {
+        Get.snackbar('Success', 'User registered successfully');
+      } else {
+        throw Exception('Failed to register user');
+      }
+    } catch (e) {
+      throw Exception('Failed to register user: $e');
     }
   }
 
-  Future<User?> login() async {
+  Future<void> loginUser({required String email, required String password, required String type}) async {
+    final url = Uri.parse('$baseUrl/user/login'); 
     try {
-      final String email = emailController.text;
-      final String password = passwordController.text;
-
-      final UserCredential userCredential =
-          await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+        headers: {'Content-Type': 'application/json'},
       );
 
-      if (userCredential.user != null) {
-        return userCredential.user;
+      if (response.statusCode == 200) {
+        setUserType(type);
+        Get.snackbar('Success', 'Login successful. Welcome, ${response.body}');
+      } else if (response.statusCode == 404) {
+        throw Exception('User not found');
+      } else if (response.statusCode == 401) {
+        throw Exception('Invalid password');
       } else {
-        return null;
+        throw Exception('Failed to login');
       }
-    } on FirebaseAuthException catch (e) {
-      // Handle login error
-      print(e.code);
-      return null;
+    } catch (e) {
+      throw Exception('Failed to login: $e');
     }
+  }
+
+    void logout() async {
+    removeToken();
+    Get.offAll(LoginScreen());
   }
 }

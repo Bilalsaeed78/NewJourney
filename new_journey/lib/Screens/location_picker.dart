@@ -21,7 +21,7 @@ class MyLocationPickerDialog extends StatelessWidget {
               child: ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(Colors.transparent)),
+                        MaterialStateProperty.all(Colors.red)),
                 onPressed: () async {
                   // Access the state using the global key and get the selected location
                   // LatLng? selectedLocation = MyLocationPickerMap

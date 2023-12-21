@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_journey/Screens/dashboard.dart';
 import 'package:new_journey/Screens/login_screen.dart';
 import 'package:new_journey/Screens/registerscreen.dart';
@@ -9,6 +10,7 @@ import 'Screens/Splash_Screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   await GetStorage.init();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: 'AIzaSyBIRh7uCzzSXJb6b_3aMf6aFse2fZ4rE6I',
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: RouteManager.splash,
+
       getPages: [
         GetPage(name: RouteManager.splash, page: () => SplashScreen()),
         GetPage(name: RouteManager.login, page: () => LoginScreen()),

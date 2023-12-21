@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:new_journey/controllers/controllers.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({Key? key}) : super(key: key);
@@ -10,6 +12,8 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   String selectedCategory = 'Room';
 
+  final authController = Get.put(AuthController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,11 +23,17 @@ class _UserDashboardState extends State<UserDashboard> {
             // Title
             Container(
               margin: const EdgeInsets.all(26.0),
-              child: Text(
-                'Discover your Perfect place to start your journey',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+              child: InkWell(
+                onTap: (){
+                  authController.logout();
+                },
+                child: Text(
+                  authController.getUserType().toString(),
+                  // 'Discover your Perfect place to start your journey',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

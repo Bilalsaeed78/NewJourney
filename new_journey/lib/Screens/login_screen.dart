@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:new_journey/Screens/owner_dashboard.dart';
+import 'package:new_journey/controllers/controllers.dart';
+import '../controllers/validation_helper.dart';
 import '../routes/routes.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,35 +13,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String _userType = "buyer";
+  String _userType = "guest";
   bool _passwordVisible = false;
 
-  String _emailErrorText = "";
-  String _passwordErrorText = "";
   final _formKey = GlobalKey<FormState>();
-
-  bool isEmailValid(String email) {
-    if (email.isEmpty ||
-        !RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*$').hasMatch(email)) {
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> login(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password);
-        RouteManager.goToDashboard();
-      } catch (e) {
-        Get.snackbar('Error', e.toString());
-      }
-    }
-    // if (_emailErrorText.isEmpty && _passwordErrorText.isEmpty) {
-    //   RouteManager.goToDashboard();
-    // }
-  }
+  final AuthController controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -72,10 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: emailController,
                       style: const TextStyle(color: Colors.black),
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        return null;
+                        return ValidationHelper.validateEmail(value);
                       },
                       decoration: const InputDecoration(
                         labelText: "Email",
@@ -106,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: ListTile(
                           leading: Radio(
-                            value: "buyer",
+                            value: "guest",
                             groupValue: _userType,
                             onChanged: (value) {
                               setState(() {
@@ -114,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                             },
                           ),
-                          title: const Text("Buyer",
+                          title: const Text("guest",
                               style: TextStyle(color: Colors.black)),
                         ),
                       ),
@@ -143,10 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: !_passwordVisible,
                   style: const TextStyle(color: Colors.black),
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
+                    return ValidationHelper.validatePassword(value);
                   },
                   decoration: InputDecoration(
                     labelText: "Password",
@@ -190,16 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () async {
-                    // if (_formKey.currentState!.validate()) {
-                    try {
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                          email: emailController.text,
-                          password: passwordController.text);
-                      RouteManager.goToDashboard();
-                    } catch (e) {
-                      Get.snackbar('Error', e.toString());
-                    }
-                    // }
+                    login(
+                      emailController.text,
+                      passwordController.text,
+                      _userType,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: const Color.fromARGB(255, 66, 66, 66),
@@ -227,5 +194,27 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> login(String email, String password, String userType) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await controller.loginUser(
+          email: email,
+          password: password,
+          type: _userType,
+        );
+        final type = controller.getUserType();
+        if(type == 'owner'){
+          Get.offAll(OwnerDashboard());
+        }
+        else{
+
+        RouteManager.goToDashboard();
+        }
+      } catch (e) {
+        Get.snackbar('Error', e.toString());
+      }
+    }
   }
 }
