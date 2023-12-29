@@ -7,7 +7,7 @@ import 'package:new_journey/controllers/api_constants.dart';
 import 'package:new_journey/local/cache_manager.dart';
 
 class AuthController extends GetxController with CacheManager {
-  static const String baseUrl = ApiConstants.baseUrl;
+ static const String baseUrl = ApiConstants.baseUrl;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -18,13 +18,13 @@ class AuthController extends GetxController with CacheManager {
     required String name,
     required String email,
     required String password,
-    String? cnic,
-    String? phoneNumber,
+    required String cnic,
+    required String phoneNumber,
+    required String role,
   }) async {
-    final url = Uri.parse('$baseUrl/user/register'); // Update with your backend URL
-    print(url);
+    final url = Uri.parse('$baseUrl/user/register');
+
     try {
-   print("here");
       final response = await http.post(
         url,
         body: jsonEncode({
@@ -33,13 +33,14 @@ class AuthController extends GetxController with CacheManager {
           'password': password,
           'cnic': cnic,
           'phoneNumber': phoneNumber,
+          'role': role,
         }),
-          headers: {
-      'Content-Type': 'application/json',
-      }, 
-      encoding: Encoding.getByName('utf-8'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        encoding: Encoding.getByName('utf-8'),
       );
-print("here");
+
       if (response.statusCode == 201) {
         Get.snackbar('Success', 'User registered successfully');
       } else {

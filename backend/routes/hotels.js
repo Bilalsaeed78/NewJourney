@@ -20,29 +20,75 @@ router.get('/:id', async(req, res) => {
 });
 
 // add hotel
+// router.post('/', async (req, res) => {
+//     const { title, description, price, location, phoneNumber } = req.body;
+  
+//     if (!title || !description || !price || !location || !phoneNumber) {
+//       res.status(401).json({ message: "All fields are required." });
+//       return; // Add return to stop execution if fields are missing
+//     }
+  
+//     try {
+//       const result = await Hotel.updateOne(
+//         { title: title },
+//         { $set: { description: description, price: price, location: location, phoneNumber: phoneNumber } },
+//         { upsert: true } 
+//       );
+  
+//       res.status(201).json(result);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: "Internal Server Error" });
+//     }
+//   });
+// router.post('/', async (req, res) => {
+//     const { title, description, price, location, phoneNumber } = req.body;
+  
+//     if (!title || !description || !price || !phoneNumber) {
+//       res.status(401).json({ message: "Title, description, price, and phone number are required." });
+//       return;
+//     }
+  
+//     try {
+//       const newHotel = await Hotel.create({
+//         title: title,
+//         description: description,
+//         price: price,
+//         location: location,
+//         phoneNumber: phoneNumber
+//       });
+  
+//       res.status(201).json(newHotel);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: "Internal Server Error" });
+//     }
+//   });
+  
 router.post('/', async (req, res) => {
     const { title, description, price, location, phoneNumber } = req.body;
   
-    if (!title || !description || !price || !location || !phoneNumber) {
-      res.status(401).json({ message: "All fields are required." });
-      return; // Add return to stop execution if fields are missing
+    if (!title || !description || !price || !phoneNumber) {
+      res.status(401).json({ message: "Title, description, price, and phone number are required." });
+      return;
     }
   
     try {
-      const result = await Hotel.updateOne(
-        { title: title },
-        { $set: { description: description, price: price, location: location, phoneNumber: phoneNumber } },
-        { upsert: true } 
-      );
+      const newHotel = await Hotel.create({
+        title: title,
+        description: description,
+        price: price,
+        location: location,
+        phoneNumber: phoneNumber
+      });
   
-      res.status(201).json(result);
+      res.status(201).json(newHotel);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   });
   
-
 // update hotel
 router.put('/:id', async (req, res) => {
     const { title, description, price, location, phoneNumber } = req.body;
