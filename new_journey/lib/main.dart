@@ -3,7 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_journey/Screens/dashboard.dart';
+import 'package:new_journey/Screens/editprofile.dart';
 import 'package:new_journey/Screens/login_screen.dart';
+import 'package:new_journey/Screens/ownerdashboard.dart';
 import 'package:new_journey/Screens/registerscreen.dart';
 import 'package:new_journey/routes/routes.dart';
 import 'Screens/Splash_Screen.dart';
@@ -30,13 +32,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: RouteManager.splash,
+      initialRoute: RouteManager.ownerdashboard,
 
       getPages: [
         GetPage(name: RouteManager.splash, page: () => SplashScreen()),
         GetPage(name: RouteManager.login, page: () => LoginScreen()),
         GetPage(name: RouteManager.register, page: () => RegistrationScreen()),
         GetPage(name: RouteManager.dashboard, page: () => UserDashboard()),
+        GetPage(
+          name: RouteManager.ownerdashboard,
+          page: () => OwnerDashboard(),
+        ),
+        GetPage(
+          name: RouteManager.editProfile,
+          page: () => EditProfileScreen(),
+        ),
       ],
     );
   }

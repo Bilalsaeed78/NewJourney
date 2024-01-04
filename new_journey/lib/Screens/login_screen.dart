@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:new_journey/Screens/owner_dashboard.dart';
+import 'package:new_journey/Screens/ownerdashboard.dart';
 import 'package:new_journey/controllers/controllers.dart';
 import '../controllers/validation_helper.dart';
 import '../routes/routes.dart';
@@ -205,12 +206,10 @@ class _LoginScreenState extends State<LoginScreen> {
           type: _userType,
         );
         final type = controller.getUserType();
-        if(type == 'owner'){
-          Get.offAll(OwnerDashboard());
-        }
-        else{
-
-        RouteManager.goToDashboard();
+        if (type == 'owner') {
+          Get.offAll(() => OwnerDashboard());
+        } else {
+          RouteManager.goToDashboard();
         }
       } catch (e) {
         Get.snackbar('Error', e.toString());

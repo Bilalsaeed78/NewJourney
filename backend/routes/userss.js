@@ -112,4 +112,37 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.put('/updateProfile/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { name, cnic, phoneNumber } = req.body;
+
+    // Validate that the provided userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send('Invalid userId');
+    }
+
+    // Find the user by userId
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Update user fields
+    user.name = name || user.name;
+    user.cnic = cnic || user.cnic;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+
+    // Save the updated user
+    await user.save();
+
+    return res.status(200).send('Profile updated successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 module.exports = router;

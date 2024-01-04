@@ -5,6 +5,10 @@ class RouteManager {
   static const String login = '/login';
   static const String register = '/register';
   static const String dashboard = '/dashboard';
+  static const String editProfile = '/editProfile';
+  static const String ownerdashboard = '/ownerdashboard';
+
+
 
   static void goToSplash() {
     Get.offAllNamed(splash);
@@ -20,5 +24,11 @@ class RouteManager {
 
   static void navigateToRegistrationScreen() {
     Get.toNamed(register);
+  }
+    static void goToEditProfile() {
+    Get.toNamed(editProfile);
+    }
+    static void goToOwnerDashboard() {
+    Get.offAllNamed(ownerdashboard);
   }
 }
