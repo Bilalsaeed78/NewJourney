@@ -161,6 +161,25 @@ const jwt = require('jsonwebtoken');
 // Replace 'your-secret-key' with a strong and secure secret key
 const JWT_SECRET = 'MySecretKey@#2023$YourApp';
 
+// const authenticateToken = (req, res, next) => {
+//     const token = req.header('Authorization');
+
+//     if (!token) {
+//         return res.status(401).send('Access denied. Token not provided.');
+//     }
+
+//     jwt.verify(token, JWT_SECRET, (err, decoded) => {
+//         if (err) {
+//             console.error('Error decoding token:', err);
+//             return res.status(403).send('Invalid token.');
+//         }
+
+//         console.log('Decoded Token:', decoded);
+
+//         req.user = decoded;
+//         next();
+//     });
+// };
 const authenticateToken = (req, res, next) => {
     const token = req.header('Authorization');
 
@@ -168,7 +187,7 @@ const authenticateToken = (req, res, next) => {
         return res.status(401).send('Access denied. Token not provided.');
     }
 
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    jwt.verify(token.split(' ')[1], JWT_SECRET, (err, decoded) => {
         if (err) {
             console.error('Error decoding token:', err);
             return res.status(403).send('Invalid token.');
@@ -274,37 +293,40 @@ router.get('/details', authenticateToken, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-router.put('/updateProfile/:userId', async (req, res) => {
+router.put('/updateProfile', authenticateToken, async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const { name, cnic, phoneNumber } = req.body;
-  
-      // Validate that the provided userId is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).send('Invalid userId');
-      }
-  
-      // Find the user by userId
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).send('User not found');
-      }
-  
-      // Update user fields
-      user.name = name || user.name;
-      user.cnic = cnic || user.cnic;
-      user.phoneNumber = phoneNumber || user.phoneNumber;
-  
-      // Save the updated user
-      await user.save();
-  
-      return res.status(200).send('Profile updated successfully');
+        const authenticatedUser = req.user;
+        const userId = authenticatedUser.userId;
+        
+
+        // Validate that the provided userId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).send('Invalid userId');
+        }
+
+        // Find the user by userId
+        const user = await User.findById(userId);
+
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Update user fields with the data from the request body
+        user.name = req.body.name || user.name;
+        user.cnic = req.body.cnic || user.cnic;
+        user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+
+        // Save the updated user
+        await user.save();
+
+        return res.status(200).send('Profile updated successfully');
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-  });
+});
+
   
 
 module.exports = router;

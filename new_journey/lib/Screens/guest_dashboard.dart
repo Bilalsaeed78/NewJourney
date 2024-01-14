@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:new_journey/Screens/drawer.dart';
 import 'package:new_journey/controllers/controllers.dart';
 
 class UserDashboard extends StatefulWidget {
@@ -12,11 +12,15 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   String selectedCategory = 'Room';
 
-  final authController = Get.put(AuthController());
+  final authController = AuthController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('User Dashboard'),
+      ),
+      drawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -24,12 +28,11 @@ class _UserDashboardState extends State<UserDashboard> {
             Container(
               margin: const EdgeInsets.all(26.0),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   authController.logout();
                 },
                 child: Text(
-                  authController.getUserType().toString(),
-                  // 'Discover your Perfect place to start your journey',
+                  authController.cacheManager.getUserType().toString(),
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,

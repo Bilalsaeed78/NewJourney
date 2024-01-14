@@ -1,47 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:new_journey/controllers/api_constants.dart';
+import 'package:new_journey/controllers/api_service.dart';
 import 'package:new_journey/controllers/controllers.dart';
-import 'package:new_journey/routes/routes.dart';
+import 'package:new_journey/local/cache_manager.dart';
 
 class EditProfileController extends GetxController {
-  final formKey = GlobalKey<FormState>();
-  final AuthController authController = AuthController();
+  final AuthController authController = Get.find();
+  final String baseUrl = ApiConstants.baseUrl;
+  final CacheManager cacheManager = CacheManager();
+  
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController cnicController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
 
-  String? validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Name is required';
-    }
-    return null;
-  }
+  Future<void> updateUserProfile({
+    required String name,
+    required String cnic,
+    required String phoneNumber,
+  }) async {
+    try {
+      await ApiService().updateUserProfile(
 
-  String? validateCnic(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'CNIC is required';
-    }
-    return null;
-  }
+        name: name,
+        cnic: cnic,
+        phoneNumber: phoneNumber,
+        token: cacheManager.getAccessToken() ?? '',
+      );
 
-  String? validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Phone Number is required';
-    }
-    return null;
-  }
+      refreshUserDetail();
 
-  void updateProfile() {
-    if (formKey.currentState!.validate()) {
-      // Call the backend API to update the user profile
-      // You can use authController.updateUserProfile() or a dedicated API call
-      // Make sure to handle the response appropriately
-      // For now, let's assume the update is successful
+
       Get.snackbar('Success', 'Profile updated successfully');
+    } catch (error) {
+      Get.snackbar('Error', 'Failed to update profile: $error');
+    }
+  }
 
-      // Navigate back to the dashboard after profile update
-      RouteManager.goToOwnerDashboard();
+  Future<void> refreshUserDetail() async {
+    try {
+      final updatedUserDetails = await ApiService().getUserDetails();
+      cacheManager.saveUserDetails(updatedUserDetails);
+      authController.update();
+    } catch (error) {
+      throw Exception('Error updating user details in drawer: $error');
     }
   }
 }

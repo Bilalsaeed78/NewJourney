@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:new_journey/Screens/owner_dashboard.dart';
+import 'package:new_journey/Screens/drawer.dart';
 import 'package:new_journey/Screens/ownerdashboard.dart';
 import 'package:new_journey/controllers/controllers.dart';
 import '../controllers/validation_helper.dart';
@@ -33,8 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 20.0),
                 Image.asset(
-                  'assets/fyplogo.png',
-                  width: 200,
+                  'assets/newjourney.png',
+                  width: 400,
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -198,22 +198,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login(String email, String password, String userType) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await controller.loginUser(
-          email: email,
-          password: password,
-          type: _userType,
-        );
-        final type = controller.getUserType();
-        if (type == 'owner') {
+  if (_formKey.currentState!.validate()) {
+    try {
+      // Perform login
+      await controller.loginUser(
+        email: email,
+        password: password,
+        type: userType,
+      );
+
+      // Retrieve actual user details after login
+      final userDetails = controller.cacheManager.getUserDetails();
+
+      // Check if the actual user role matches the selected user type
+      if (userDetails != null && userDetails['role'] == userType) {
+        // Role matches, navigate to the appropriate screen
+        if (userType == 'owner') {
           Get.offAll(() => OwnerDashboard());
         } else {
+          // Guest or other roles can go to UserDashboard
           RouteManager.goToDashboard();
         }
-      } catch (e) {
-        Get.snackbar('Error', e.toString());
+
+        // Show success message only if the role matches
+        Get.snackbar(
+          'Success',
+          'Login successful. Welcome, ${controller.nameController.text}',
+        );
+      } else {
+        // Role doesn't match, show an error message
+        Get.snackbar('Error', 'Invalid role for the selected user type');
       }
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
     }
   }
+}
 }

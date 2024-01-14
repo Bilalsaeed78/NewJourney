@@ -4,6 +4,7 @@ import 'package:new_journey/controllers/edit_profile_controller.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final EditProfileController editProfileController = Get.put(EditProfileController());
+  
 
   @override
   Widget build(BuildContext context) {
@@ -13,37 +14,35 @@ class EditProfileScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: editProfileController.formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: editProfileController.nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-                validator: (value) => editProfileController.validateName(value),
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: editProfileController.cnicController,
-                decoration: InputDecoration(labelText: 'CNIC'),
-                validator: (value) => editProfileController.validateCnic(value),
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: editProfileController.phoneNumberController,
-                decoration: InputDecoration(labelText: 'Phone Number'),
-                validator: (value) => editProfileController.validatePhoneNumber(value),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => editProfileController.updateProfile(),
-                child: Text('Update Profile'),
-              ),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: editProfileController.nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+            ),
+            TextField(
+              controller: editProfileController.cnicController,
+              decoration: InputDecoration(labelText: 'CNIC'),
+            ),
+            TextField(
+              controller: editProfileController.phoneNumberController,
+              decoration: InputDecoration(labelText: 'Phone Number'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                editProfileController.updateUserProfile(
+                  name: editProfileController.nameController.text,
+                  cnic: editProfileController.cnicController.text,
+                  phoneNumber: editProfileController.phoneNumberController.text,
+                );
+              },
+              child: Text('Update Profile'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
