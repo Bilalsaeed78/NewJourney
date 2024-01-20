@@ -22,7 +22,6 @@ class EditProfileController extends GetxController {
   }) async {
     try {
       await ApiService().updateUserProfile(
-
         name: name,
         cnic: cnic,
         phoneNumber: phoneNumber,

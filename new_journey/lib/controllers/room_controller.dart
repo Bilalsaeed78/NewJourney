@@ -10,7 +10,6 @@ class RoomController extends GetxController {
 
   RxList<Room> rooms = <Room>[].obs;
 
-
   Future<void> uploadRoom({
     required String title,
     required String description,
@@ -42,7 +41,8 @@ class RoomController extends GetxController {
         // You can add any further logic or actions here after successful upload
       } else {
         print("getting some error");
-        throw Exception('Failed to upload room: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'Failed to upload room: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
       print('Error uploading room: $error');
@@ -50,33 +50,35 @@ class RoomController extends GetxController {
     }
   }
 
-    Future<void> fetchRooms() async {
-  try {
-    final response = await http.get(Uri.parse('$baseUrl/room'));
+  Future<void> fetchRooms() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/room'));
 
-    if (response.statusCode == 200) {
-      final dynamic data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final dynamic data = json.decode(response.body);
 
-      if (data != null && data is List<dynamic>) {
-        rooms.assignAll(data.map((json) {
-          try {
-            return Room.fromJson(json);
-          } catch (e) {
-            print('Error parsing room data: $e');
-            throw Exception('Error parsing room data: $e');
-          }
-        }).toList());
+        if (data != null && data is List<dynamic>) {
+          rooms.assignAll(data.map((json) {
+            try {
+              return Room.fromJson(json);
+            } catch (e) {
+              print('Error parsing room data: $e');
+              throw Exception('Error parsing room data: $e');
+            }
+          }).toList());
+        } else {
+          print('Failed to load rooms: Invalid data format');
+          throw Exception('Failed to load rooms: Invalid data format');
+        }
       } else {
-        print('Failed to load rooms: Invalid data format');
-        throw Exception('Failed to load rooms: Invalid data format');
+        print(
+            'Failed to load rooms: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'Failed to load rooms: ${response.statusCode} - ${response.body}');
       }
-    } else {
-      print('Failed to load rooms: ${response.statusCode} - ${response.body}');
-      throw Exception('Failed to load rooms: ${response.statusCode} - ${response.body}');
+    } catch (error) {
+      print('Error fetching rooms: $error');
+      throw Exception('Error fetching rooms: $error');
     }
-  } catch (error) {
-    print('Error fetching rooms: $error');
-    throw Exception('Error fetching rooms: $error');
   }
 }
-    }

@@ -355,10 +355,35 @@ class _UserDashboardState extends State<UserDashboard> {
   final authController = AuthController();
   final roomController = RoomController();
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    roomController.fetchRooms();
+
+    // Check if the user is logged in as a guest
+    final userRole = authController.cacheManager.getUserDetails()?['role'];
+    if (userRole == 'guest') {
+      // If logged in as a guest, fetch rooms after 2 seconds
+      Future.delayed(Duration(seconds: 2), () {
+        _fetchRooms();
+      });
+    } else {
+      _fetchRooms(); // Fetch rooms immediately for other roles
+    }
+  }
+
+  // Function to fetch rooms and update the loading state
+  Future<void> _fetchRooms() async {
+    try {
+      await roomController.fetchRooms();
+    } catch (e) {
+      print('Error fetching rooms: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -429,41 +454,29 @@ class _UserDashboardState extends State<UserDashboard> {
                 ],
               ),
             ),
-            if (selectedCategory == 'Room')
-              Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: roomController.rooms.length,
-                    itemBuilder: (context, index) {
-                      final room = roomController.rooms[index];
-                      return _buildRoomCard(
-                        imageUrl: 'assets/roomimg.jpg',
-                        cardTitle: room.title,
-                        roomDetails: room.description,
-                        price: room.price,
-                        wifiAvailability: room.wifiAvailability,
-                        generatorBackup: room.generatorBackup,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            if (selectedCategory == 'Office')
-              _buildOfficeCard(
-                imageUrl: 'assets/officespace.jpg',
-                cardTitle: 'Office Card 1',
-              ),
-            if (selectedCategory == 'Stay')
-              _buildStayCard(
-                imageUrl: 'assets/appartment.jpg',
-                cardTitle: 'Stay Card 1',
-              ),
+            // Use CircularProgressIndicator while loading
+            if (isLoading)
+              CircularProgressIndicator()
+            else
+              _buildRoomsSection(),
           ],
         ),
       ),
     );
+  }
+
+  // Build the rooms section based on the selected category
+  Widget _buildRoomsSection() {
+    // Display your rooms based on the selected category
+    if (selectedCategory == 'Room') {
+      return _buildRoomList();
+    } else if (selectedCategory == 'Office') {
+      return _buildOfficeCard();
+    } else if (selectedCategory == 'Stay') {
+      return _buildStayCard();
+    } else {
+      return Text('Invalid category');
+    }
   }
 
   Widget _buildCategory(String category) {
@@ -492,94 +505,40 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
-  Widget _buildRoomCard({
-  required String imageUrl,
-  required String cardTitle,
-  required String roomDetails,
-  required String price,
-  required String wifiAvailability, // Ensure this is a String
-  required String generatorBackup, // Ensure this is a String
-}) {
-  // Convert the String values to booleans
-  bool isWifiAvailable = wifiAvailability.toLowerCase() == 'yes';
-  bool isGeneratorAvailable = generatorBackup.toLowerCase() == 'yes';
-
-  return Card(
-    margin: const EdgeInsets.all(16.0),
-    elevation: 5,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16.0),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
-          child: Image.asset(
-            imageUrl,
-            height: 150.0,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                cardTitle,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                roomDetails,
-                style: TextStyle(color: Colors.grey),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Price: $price/night',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'WiFi: ${isWifiAvailable ? 'Available' : 'Not Available'}',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                'Generator: ${isGeneratorAvailable ? 'Available' : 'Not Available'}',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
+  Widget _buildRoomList() {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: roomController.rooms.length,
+          itemBuilder: (context, index) {
+            final room = roomController.rooms[index];
+            return _buildRoomCard(
+              imageUrl: 'assets/roomimg.jpg',
+              cardTitle: room.title,
+              roomDetails: room.description,
+              price: room.price,
+              wifiAvailability: room.wifiAvailability,
+              generatorBackup: room.generatorBackup,
+            );
+          },
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 
-
-
-  Widget _buildOfficeCard({
+  Widget _buildRoomCard({
     required String imageUrl,
     required String cardTitle,
+    required String roomDetails,
+    required String price,
+    required String wifiAvailability,
+    required String generatorBackup,
   }) {
+    bool isWifiAvailable = wifiAvailability.toLowerCase() == 'yes';
+    bool isGeneratorAvailable = generatorBackup.toLowerCase() == 'yes';
+
     return Card(
       margin: const EdgeInsets.all(16.0),
       elevation: 5,
@@ -615,6 +574,77 @@ class _UserDashboardState extends State<UserDashboard> {
                 ),
                 SizedBox(height: 8.0),
                 Text(
+                  roomDetails,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'Price: $price/night',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'WiFi: ${isWifiAvailable ? 'Available' : 'Not Available'}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  'Generator: ${isGeneratorAvailable ? 'Available' : 'Not Available'}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfficeCard() {
+    return Card(
+      margin: const EdgeInsets.all(16.0),
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+            child: Image.asset(
+              'assets/officespace.jpg',
+              height: 150.0,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Office Card 1',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
                   'Office details here',
                   style: TextStyle(color: Colors.grey),
                 ),
@@ -635,10 +665,7 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
-  Widget _buildStayCard({
-    required String imageUrl,
-    required String cardTitle,
-  }) {
+  Widget _buildStayCard() {
     return Card(
       margin: const EdgeInsets.all(16.0),
       elevation: 5,
@@ -654,7 +681,7 @@ class _UserDashboardState extends State<UserDashboard> {
               topRight: Radius.circular(16.0),
             ),
             child: Image.asset(
-              imageUrl,
+              'assets/appartment.jpg',
               height: 150.0,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -666,7 +693,7 @@ class _UserDashboardState extends State<UserDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  cardTitle,
+                  'Stay Card 1',
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
