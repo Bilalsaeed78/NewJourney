@@ -23,23 +23,22 @@ class _UserDashboardState extends State<UserDashboard> {
       drawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
-          children: <Widget>[
-            // Title
-            Container(
-              margin: const EdgeInsets.all(26.0),
-              child: InkWell(
-                onTap: () {
-                  authController.logout();
-                },
-                child: Text(
-                  authController.cacheManager.getUserType().toString(),
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+          children: [
+            // Container(
+            //   margin: const EdgeInsets.all(26.0),
+            //   child: InkWell(
+            //     onTap: () {
+            //       authController.logout();
+            //     },
+            //     child: Text(
+            //       authController.cacheManager.getUserType().toString(),
+            //       style: TextStyle(
+            //         fontSize: 24.0,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             // Search Bar with Filter Options
             Padding(
               padding: const EdgeInsets.all(16.0),

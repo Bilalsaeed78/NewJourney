@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:new_journey/Screens/create_space_category.dart';
 import 'package:new_journey/Screens/editprofile.dart';
-import 'package:new_journey/Screens/owner_dashboard.dart';
 import 'package:new_journey/controllers/controllers.dart';
-import 'package:new_journey/controllers/edit_profile_controller.dart';
-import 'package:new_journey/routes/routes.dart';
+
 
 class AppDrawer extends StatelessWidget {
   final AuthController authController = Get.find();
@@ -74,8 +73,7 @@ class AppDrawer extends StatelessWidget {
               ListTile(
                 title: Text('Create Hotel'),
                 onTap: () {
-                  Get.to(()=> OwnerrDashboard());
-                  // Navigate to the screen for creating a hotel
+                  Get.to(() => CategoryScreen());
                 },
               ),
               ListTile(

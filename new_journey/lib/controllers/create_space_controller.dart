@@ -1,41 +1,42 @@
-// // create_space_controller.dart
-// import 'dart:convert';
-// import 'package:get/get.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:new_journey/controllers/api_constants.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-// class CreateSpaceController extends GetxController {
-//   final String baseUrl = ApiConstants.baseUrl;
+import 'package:new_journey/controllers/api_constants.dart';
 
-//   Future<void> uploadSpace({
-//     required String title,
-//     required String description,
-//     required String price,
-//     String? location,
-//     required String phoneNumber,
-//   }) async {
-//     final response = await http.post(
-//       Uri.parse('$baseUrl/space'),
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: jsonEncode({
-//         'title': title,
-//         'description': description,
-//         'price': price,
-//         'location': location,
-//         'phoneNumber': phoneNumber,
-//       }),
-//     );
+class CreateSpaceController extends GetxController {
+  final String baseUrl = ApiConstants.baseUrl; // Replace with your API base URL
 
-//     if (response.statusCode == 201) {
-//       // Space uploaded successfully
-//       print('Space uploaded successfully');
-//     } else {
-//       // Handle errors
-//       throw Exception('Failed to upload space: ${response.body}');
-//     }
-//   }
+  Future<void> uploadSpace({
+    required String category,
+    required String title,
+    required String description,
+    required String price,
+    String? location,
+    required String phoneNumber,
+    String? additionalField1,
+    String? additionalField2,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/$category'), // Use the correct endpoint based on the category
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'title': title,
+        'description': description,
+        'price': price,
+        'location': location,
+        'phoneNumber': phoneNumber,
+        'additionalField1': additionalField1,
+        'additionalField2': additionalField2,
+      }),
+    );
 
-//   static createSpace({required String title, required String description, required String price, required String location, required String phoneNumber}) {}
-// }
+    if (response.statusCode == 201) {
+      print('$category uploaded successfully');
+    } else {
+      throw Exception('Failed to upload $category: ${response.body}');
+    }
+  }
+}
