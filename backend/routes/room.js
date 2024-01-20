@@ -3,7 +3,7 @@ const router = express.Router();
 const Room = require('../models/roommodel'); 
 
 // Route to get all rooms
-router.get('/room', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const rooms = await Room.find();
     res.status(200).json(rooms);
@@ -13,7 +13,7 @@ router.get('/room', async (req, res) => {
 });
 
 // Route to get a specific room by ID
-router.get('/room/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
     if (!room) {
@@ -26,7 +26,7 @@ router.get('/room/:id', async (req, res) => {
 });
 
 // Route to update a specific room by ID
-router.put('/room/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const updatedRoom = await Room.findByIdAndUpdate(
       req.params.id,
@@ -40,7 +40,7 @@ router.put('/room/:id', async (req, res) => {
 });
 
 // Route to delete a specific room by ID
-router.delete('/room/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedRoom = await Room.findByIdAndDelete(req.params.id);
     if (!deletedRoom) {
@@ -71,38 +71,6 @@ router.post('/', async (req, res) => {
     console.error(error); // Log the error for debugging
     res.status(500).json({ error: 'Internal Server Error' });
   }
-// router.post('/', async (req, res) => {
-//   try {
-//     // Extracting room details from the request body
-//     const {
-//       title,
-//       description,
-//       price,
-//       location,
-//       phoneNumber,
-//       wifiAvailability,
-//       generatorBackup,
-//     } = req.body;
-
-//     // Creating a new instance of the Room model with the extracted details
-//     const newRoom = new Room({
-//       title,
-//       description,
-//       price,
-//       location,
-//       phoneNumber,
-//       wifiAvailability,
-//       generatorBackup,
-//     });
-
-//     // Saving the new room to the database
-//     const savedRoom = await newRoom.save();
-
-//     // Sending the saved room as a response
-//     res.status(201).json(savedRoom);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
 });
 
 module.exports = router;

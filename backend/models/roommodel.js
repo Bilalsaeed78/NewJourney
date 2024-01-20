@@ -6,7 +6,7 @@ const roomSchema = new mongoose.Schema({
   price: String,
   location: String,
   phoneNumber: String,
-  wifi: String,
+  wifiAvailability: String,
   generatorBackup: String,
 });
 

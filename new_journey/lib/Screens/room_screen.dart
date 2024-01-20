@@ -30,82 +30,84 @@ class _RoomScreenState extends State<RoomScreen> {
       appBar: AppBar(
         title: const Text("Room Screen"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField(
-                controller: titleController,
-                labelText: 'Enter Title',
-              ),
-              _buildTextField(
-                controller: descriptionController,
-                labelText: 'Enter Description',
-              ),
-              _buildTextField(
-                controller: priceController,
-                labelText: 'Enter Price',
-                keyboardType: TextInputType.number,
-              ),
-              _buildTextField(
-                controller: phoneNumberController,
-                labelText: 'Enter Phone Number',
-                keyboardType: TextInputType.phone,
-              ),
-              _buildTextField(
-                controller: wifiController,
-                labelText: 'WiFi Availability',
-              ),
-              _buildTextField(
-                controller: generatorController,
-                labelText: 'Generator Backup',
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  var result = await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return MyLocationPickerDialog();
-                    },
-                  );
-                  if (result != null) {
-                    print('Latitude: ${result[0]}');
-                    print('Longitude: ${result[1]}');
-                    setState(() {
-                      ownerLatitude = result[0];
-                      ownerLongitude = result[1];
-                    });
-                  } else {
-                    print('Dialog closed without a result');
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildTextField(
+                  controller: titleController,
+                  labelText: 'Enter Title',
                 ),
-                child: Container(
-                  height: 50,
-                  width: 400,
-                  child: const Center(
-                    child: Text(
-                      "Get Location",
-                      style: TextStyle(color: Colors.white),
+                _buildTextField(
+                  controller: descriptionController,
+                  labelText: 'Enter Description',
+                ),
+                _buildTextField(
+                  controller: priceController,
+                  labelText: 'Enter Price',
+                  keyboardType: TextInputType.number,
+                ),
+                _buildTextField(
+                  controller: phoneNumberController,
+                  labelText: 'Enter Phone Number',
+                  keyboardType: TextInputType.phone,
+                ),
+                _buildTextField(
+                  controller: wifiController,
+                  labelText: 'WiFi Availability',
+                ),
+                _buildTextField(
+                  controller: generatorController,
+                  labelText: 'Generator Backup',
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    var result = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MyLocationPickerDialog();
+                      },
+                    );
+                    if (result != null) {
+                      print('Latitude: ${result[0]}');
+                      print('Longitude: ${result[1]}');
+                      setState(() {
+                        ownerLatitude = result[0];
+                        ownerLongitude = result[1];
+                      });
+                    } else {
+                      print('Dialog closed without a result');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  child: Container(
+                    height: 50,
+                    width: 400,
+                    child: const Center(
+                      child: Text(
+                        "Get Location",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _uploadRoom();
-                },
-                child: const Text('Upload'),
-              ),
-            ],
+                SizedBox(
+                  height: 20.0,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _uploadRoom();
+                  },
+                  child: const Text('Upload'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
