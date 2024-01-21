@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:new_journey/Screens/drawer.dart';
+import 'package:new_journey/controllers/appartment_controller.dart';
 import 'package:new_journey/controllers/controllers.dart';
 import 'package:new_journey/controllers/office%20controller.dart';
 import 'package:new_journey/controllers/room_controller.dart';
+
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({Key? key}) : super(key: key);
@@ -12,12 +14,12 @@ class UserDashboard extends StatefulWidget {
 }
 
 class _UserDashboardState extends State<UserDashboard> {
-  String selectedCategory = 'Room';
-
   final authController = AuthController();
   final roomController = RoomController();
   final officeController = OfficeController();
+  final apartmentController = ApartmentController();
 
+  String selectedCategory = 'Room';
   bool isLoading = true;
 
   @override
@@ -29,10 +31,12 @@ class _UserDashboardState extends State<UserDashboard> {
       Future.delayed(Duration(seconds: 2), () {
         _fetchRooms();
         _fetchOffices();
+        _fetchApartments();
       });
     } else {
       _fetchRooms();
       _fetchOffices();
+      _fetchApartments();
     }
   }
 
@@ -60,7 +64,19 @@ class _UserDashboardState extends State<UserDashboard> {
     }
   }
 
-@override
+  Future<void> _fetchApartments() async {
+    try {
+      await apartmentController.fetchApartments();
+    } catch (e) {
+      print('Error fetching apartments: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -70,15 +86,6 @@ class _UserDashboardState extends State<UserDashboard> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Add the logo above the search filter
-            // Padding(
-            //   padding: const EdgeInsets.only(top:0.0),
-            //   child: Image.asset(
-            //     'assets/newjourneyshort.png',
-            //     width: 220.0,
-            //     // height: 100.0,
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -104,7 +111,8 @@ class _UserDashboardState extends State<UserDashboard> {
                           ),
                           IconButton(
                             icon: Icon(Icons.filter_list),
-                            onPressed: () {                              // Handle filter button press
+                            onPressed: () {
+                              // Handle filter button press
                             },
                           ),
                         ],
@@ -132,7 +140,7 @@ class _UserDashboardState extends State<UserDashboard> {
                 children: <Widget>[
                   _buildCategory('Room', Icons.hotel),
                   _buildCategory('Office', Icons.work),
-                  _buildCategory('Stay', Icons.home),
+                  _buildCategory('Apartment', Icons.home),
                 ],
               ),
             ),
@@ -151,8 +159,8 @@ class _UserDashboardState extends State<UserDashboard> {
       return _buildRoomList();
     } else if (selectedCategory == 'Office') {
       return _buildOfficeCard();
-    } else if (selectedCategory == 'Stay') {
-      return _buildStayCard();
+    } else if (selectedCategory == 'Apartment') {
+      return _buildApartmentsSection();
     } else {
       return Text('Invalid category');
     }
@@ -451,8 +459,41 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
+  Widget _buildApartmentsSection() {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: apartmentController.apartments.length,
+          itemBuilder: (context, index) {
+            final apartment = apartmentController.apartments[index];
+            return _buildApartmentCardWidget(
+              imageUrl: 'assets/appartment.jpg', // Replace with actual image path
+              cardTitle: apartment.title,
+              apartmentDetails: apartment.description,
+              price: apartment.price,
+              floor: apartment.floor,
+              liftAvailability: apartment.liftAvailability,
+              rooms: apartment.rooms,
+            );
+          },
+        ),
+      ],
+    );
+  }
 
-  Widget _buildStayCard() {
+  Widget _buildApartmentCardWidget({
+    required String imageUrl,
+    required String cardTitle,
+    required String apartmentDetails,
+    required String price,
+    required String floor,
+    required String liftAvailability,
+    required String rooms,
+  }) {
+    bool isLiftAvailable = liftAvailability.toLowerCase() == 'yes';
+
     return Card(
       margin: const EdgeInsets.all(16.0),
       elevation: 5,
@@ -468,7 +509,7 @@ class _UserDashboardState extends State<UserDashboard> {
               topRight: Radius.circular(16.0),
             ),
             child: Image.asset(
-              'assets/appartment.jpg',
+              imageUrl,
               height: 150.0,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -480,7 +521,7 @@ class _UserDashboardState extends State<UserDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Stay Card 1',
+                  cardTitle,
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -488,17 +529,66 @@ class _UserDashboardState extends State<UserDashboard> {
                 ),
                 SizedBox(height: 8.0),
                 Text(
-                  'Stay details here',
+                  apartmentDetails,
                   style: TextStyle(color: Colors.grey),
                 ),
                 SizedBox(height: 8.0),
                 Text(
-                  'Price: \$75/night',
+                  'Price: $price/night',
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
                   ),
+                ),
+                SizedBox(height: 8.0),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.home_work,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Floor: $floor',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.elevator,
+                      color: isLiftAvailable ? Colors.green : Colors.red,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Lift: ${isLiftAvailable ? 'Available' : 'Not Available'}',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.meeting_room,
+                      color: Colors.brown,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Rooms: $rooms',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
