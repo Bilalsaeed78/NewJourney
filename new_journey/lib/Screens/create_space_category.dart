@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:new_journey/Screens/appartment_screen.dart';
+import 'package:new_journey/Screens/office_screen.dart';
 import 'package:new_journey/Screens/room_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -8,6 +10,8 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
+  String? selectedCategory;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +27,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
               Icons.hotel,
               Color.fromARGB(255, 156, 111, 95),
               Color.fromARGB(255, 156, 111, 95),
+              selectedCategory == 'Room',
               () {
-                Get.to(() => RoomScreen());
+                selectedCategory = 'Room';
               },
             ),
             SizedBox(height: 16),
@@ -33,24 +38,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
               Icons.work,
               Color.fromARGB(255, 156, 111, 95),
               Color.fromARGB(255, 156, 111, 95),
+              selectedCategory == 'Office',
               () {
-                // Get.to(() => OfficeScreen());
+                selectedCategory = 'Office';
               },
             ),
             SizedBox(height: 16),
             _buildCategoryButton(
-              'Stay',
+              'Apartment',
               Icons.home,
               Color.fromARGB(255, 156, 111, 95),
               Color.fromARGB(255, 156, 111, 95),
+              selectedCategory == 'Apartment',
               () {
-                // Get.to(() => StayScreen());
+                selectedCategory = 'Apartment';
               },
             ),
             SizedBox(height: 42),
             ElevatedButton(
               onPressed: () {
-                // Handle the continue button action if needed
+                if (selectedCategory == 'Room') {
+                  Get.to(() => RoomScreen());
+                } else if (selectedCategory == 'Office') {
+                  Get.to(() => OfficeScreen());
+                } else if (selectedCategory == 'Apartment') {
+                  Get.to(() => ApartmentScreen()); // Navigate to ApartmentScreen
+                } else {
+                  // Handle other categories if needed
+                }
               },
               style: ElevatedButton.styleFrom(
                 primary: Color.fromARGB(255, 67, 38, 4),
@@ -74,22 +89,27 @@ class _CategoryScreenState extends State<CategoryScreen> {
     IconData icon,
     Color iconColor,
     Color textColor,
+    bool isSelected,
     VoidCallback onTap,
   ) {
     return ElevatedButton(
-      onPressed: onTap,
+      onPressed: () {
+        setState(() {
+          onTap();
+        });
+      },
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 115, vertical: 12),
-        primary: null,
+        primary: isSelected ? Color.fromARGB(255, 67, 38, 4) : null,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 40, color: iconColor),
+          Icon(icon, size: 40, color: isSelected ? Colors.white : iconColor),
           SizedBox(width: 8),
           Text(
             category,
-            style: TextStyle(color: textColor),
+            style: TextStyle(color: isSelected ? Colors.white : textColor),
           ),
         ],
       ),

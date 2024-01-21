@@ -9,8 +9,8 @@ class RouteManager {
   static const String ownerdashboard = '/ownerdashboard';
   static const String category = '/category';
   static const String room = '/room';
-  // static const String office = '/office';
-  // static const String stay = '/stay';
+  static const String office = '/office';
+  static const String apartment = '/apartment';
   // static const String CategoryScreen = '/categoryScreen';
 
 
@@ -46,13 +46,11 @@ class RouteManager {
     Get.toNamed(room);
   }
 
-  
+  static void goToOffice() {
+    Get.toNamed(office);
+  }
 
-  // static void goToOffice() {
-  //   Get.toNamed(office);
-  // }
-
-  // static void goToStay() {
-  //   Get.toNamed(stay);
-  // }
+  static void goToApartment() {
+    Get.toNamed(apartment);
+  }
 }

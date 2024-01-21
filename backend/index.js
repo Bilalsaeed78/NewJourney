@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoute = require('./routes/users');
 const hotelRoute = require('./routes/hotels');
-const roomRoutes =require('./routes/room');
+const roomRoutes = require('./routes/room');
+const officeRoutes= require('./routes/office');
+const apartmentRoutes =require('./routes/apartment')
+
 const connectDatabase = require('./utils/database'); // Adjust the path as needed
 
 
@@ -17,12 +20,11 @@ app.use(cors());
 
 // Connect to the database and create the index
 connectDatabase();
-// app.use('/spaces', spaceRoutes);
 app.use('/user', userRoute);
 app.use('/hotel', hotelRoute);
 app.use('/room', roomRoutes);
-// app.use('/office', officeRoutes);
-// app.use('/stay', stayRoutes);
+app.use('/office', officeRoutes);
+app.use('/apartment', apartmentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

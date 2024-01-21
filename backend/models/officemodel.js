@@ -6,10 +6,9 @@ const officeSchema = new mongoose.Schema({
   price: String,
   location: String,
   phoneNumber: String,
-  centralizedAC: String,
-  standbyGenerator: String,
+  wifiAvailability: String,
+  acAvailability:String,
+  cabinsAvailability:String,
 });
 
-const Office = mongoose.model('Office', officeSchema);
-
-module.exports = Office;
+module.exports = mongoose.model('Office', officeSchema);

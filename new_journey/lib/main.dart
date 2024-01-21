@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_journey/Screens/appartment_screen.dart';
 import 'package:new_journey/Screens/create_space_category.dart';
 import 'package:new_journey/Screens/editprofile.dart';
 import 'package:new_journey/Screens/guest_dashboard.dart';
 import 'package:new_journey/Screens/login_screen.dart';
+import 'package:new_journey/Screens/office_screen.dart';
 import 'package:new_journey/Screens/ownerdashboard.dart';
 import 'package:new_journey/Screens/registerscreen.dart';
 import 'package:new_journey/Screens/room_screen.dart';
@@ -52,8 +54,8 @@ class MyApp extends StatelessWidget {
         ),
          GetPage(name: '/category', page: () => CategoryScreen()),
         GetPage(name: '/room', page: () => RoomScreen()),
-        // GetPage(name: '/office', page: () => OfficeScreen(), binding: OfficeBinding()),
-        // GetPage(name: '/stay', page: () => StayScreen(), binding: StayBinding()),
+        GetPage(name: '/office', page: () => OfficeScreen()),
+        GetPage(name: '/apartment', page: () => ApartmentScreen(), ),
 
       ],
     );
