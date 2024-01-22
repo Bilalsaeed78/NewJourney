@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:new_journey/Screens/location_picker.dart';
+import 'package:new_journey/Screens/ownerdashboard.dart';
 import 'package:new_journey/controllers/appartment_controller.dart';
 
 class ApartmentScreen extends StatefulWidget {
@@ -21,7 +22,8 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
   final TextEditingController liftController = TextEditingController();
   final TextEditingController generatorController = TextEditingController();
 
-  final ApartmentController apartmentController = Get.put(ApartmentController());
+  final ApartmentController apartmentController =
+      Get.put(ApartmentController());
 
   double? ownerLatitude;
   double? ownerLongitude;
@@ -30,7 +32,11 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Apartment Screen"),
+        title: const Text(
+          "Apartment Screen",
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -75,8 +81,9 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
                   controller: generatorController,
                   labelText: 'Generator Backup',
                 ),
-                const SizedBox(height: 16),
-                ElevatedButton(
+                const SizedBox(height: 1),
+                _buildElevatedButton(
+                  label: 'Get Location',
                   onPressed: () async {
                     var result = await showDialog(
                       context: context,
@@ -95,28 +102,13 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
                       print('Dialog closed without a result');
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                  ),
-                  child: Container(
-                    height: 50,
-                    width: 400,
-                    child: const Center(
-                      child: Text(
-                        "Get Location",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
                 ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                ElevatedButton(
+                SizedBox(height: 5),
+                _buildElevatedButton(
+                  label: 'Upload',
                   onPressed: () {
                     _uploadApartment();
                   },
-                  child: const Text('Upload'),
                 ),
               ],
             ),
@@ -138,6 +130,7 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: labelText,
+          labelStyle: TextStyle(color: Colors.black),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black),
@@ -146,6 +139,23 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
             borderSide: BorderSide(color: Colors.grey),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildElevatedButton({
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+        primary: Colors.black,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -179,6 +189,10 @@ class _ApartmentScreenState extends State<ApartmentScreen> {
         );
 
         Get.snackbar('Success', 'Apartment uploaded successfully');
+
+        await Future.delayed(const Duration(seconds: 2));
+
+        Get.to(() => OwnerDashboard());
       } catch (error) {
         Get.snackbar('Error', 'Failed to upload apartment: $error');
       }

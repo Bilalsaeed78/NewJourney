@@ -12,19 +12,19 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: GetBuilder<AuthController>(builder: (controller) {
         final user = authController.cacheManager.getUserDetails();
-        final userRole = user?['role'];
+        final userRole = user?['role'] ?? '';
 
         return ListView(
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Colors.red,
+                color: Colors.purple,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'User Information',
                     style: TextStyle(
                       color: Colors.white,
@@ -33,36 +33,66 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 10.0),
                   if (user != null)
-                    Column(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Name: ${user['name']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: AssetImage('assets/profilefordrawer.jpg'), // Replace with your image asset
                         ),
-                        Text(
-                          'Email: ${user['email']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        Text(
-                          'Role: ${user['role']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
+                        SizedBox(width: 10.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.person, color: Colors.white, size: 16.0),
+                                SizedBox(width: 5.0),
+                                Text(
+                                  'Name: ${user['name'] ?? ''}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.email, color: Colors.white, size: 16.0),
+                                SizedBox(width: 5.0),
+                                Text(
+                                  'Email: ${user['email'] ?? ''}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                  SizedBox(height: 5.0),
+                  Row(
+                    children: [
+                      Icon(Icons.assignment_ind, color: Colors.white, size: 16.0),
+                      SizedBox(width: 5.0),
+                      Text(
+                        'Role: $userRole',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
             ListTile(
+              leading: Icon(Icons.edit, color: Colors.black),
               title: const Text('Edit Profile'),
               onTap: () {
                 Get.to(() => EditProfileScreen());
@@ -70,18 +100,21 @@ class AppDrawer extends StatelessWidget {
             ),
             if (userRole == 'owner') ...[
               ListTile(
+                leading: Icon(Icons.hotel, color: Colors.black),
                 title: const Text('Create Hotel'),
                 onTap: () {
-                  Get.to(()=> CategoryScreen());// Use the correct method
+                  Get.to(() => CategoryScreen());
                 },
               ),
               ListTile(
+                leading: Icon(Icons.delete, color: Colors.black),
                 title: const Text('Delete Hotel'),
                 onTap: () {
                   // Navigate to the screen for deleting a hotel
                 },
               ),
               ListTile(
+                leading: Icon(Icons.edit, color: Colors.black),
                 title: const Text('Edit Hotel'),
                 onTap: () {
                   // Navigate to the screen for editing a hotel
@@ -89,6 +122,7 @@ class AppDrawer extends StatelessWidget {
               ),
             ],
             ListTile(
+              leading: Icon(Icons.logout, color: Colors.black),
               title: const Text('Logout'),
               onTap: () {
                 authController.logout();
