@@ -8,6 +8,12 @@ class ApartmentController extends GetxController {
   final String baseUrl = ApiConstants.baseUrl;
 
   RxList<Apartment> apartments = <Apartment>[].obs;
+  List<Apartment> originalApartments = []; // Add this line to store original data
+
+  void updateApartments(List<Apartment> updatedApartments) {
+    apartments.clear();
+    apartments.addAll(updatedApartments);
+  }
 
   Future<void> uploadApartment({
     required String title,
@@ -54,6 +60,7 @@ class ApartmentController extends GetxController {
   }
 
   Future<void> fetchApartments() async {
+      originalApartments.clear(); 
     try {
       final response = await http.get(Uri.parse('$baseUrl/apartment'));
 
@@ -69,6 +76,8 @@ class ApartmentController extends GetxController {
               throw Exception('Error parsing apartment data: $e');
             }
           }).toList());
+                            originalApartments.addAll(apartments);
+
         } else {
           print('Failed to load apartments: Invalid data format');
           throw Exception('Failed to load apartments: Invalid data format');

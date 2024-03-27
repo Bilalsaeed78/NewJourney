@@ -101,21 +101,21 @@ class AppDrawer extends StatelessWidget {
             if (userRole == 'owner') ...[
               ListTile(
                 leading: Icon(Icons.hotel, color: Colors.black),
-                title: const Text('Create Hotel'),
+                title: const Text('Create Space'),
                 onTap: () {
                   Get.to(() => CategoryScreen());
                 },
               ),
               ListTile(
                 leading: Icon(Icons.delete, color: Colors.black),
-                title: const Text('Delete Hotel'),
+                title: const Text('Delete Space'),
                 onTap: () {
                   // Navigate to the screen for deleting a hotel
                 },
               ),
               ListTile(
                 leading: Icon(Icons.edit, color: Colors.black),
-                title: const Text('Edit Hotel'),
+                title: const Text('Edit Space'),
                 onTap: () {
                   // Navigate to the screen for editing a hotel
                 },

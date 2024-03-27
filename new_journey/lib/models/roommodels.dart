@@ -1,5 +1,5 @@
 class Room {
-  final String id; // Add id field
+  final String id; 
   final String title;
   final String description;
   final String price;
@@ -19,7 +19,7 @@ class Room {
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
-      id: json['_id'] ?? '', // Provide a default value if '_id' is null
+      id: json['_id'] ?? '', 
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       price: json['price'] ?? '',

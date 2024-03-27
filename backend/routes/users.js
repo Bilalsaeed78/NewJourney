@@ -5,28 +5,8 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Replace 'your-secret-key' with a strong and secure secret key
 const JWT_SECRET = 'MySecretKey@#2023$YourApp';
 
-// const authenticateToken = (req, res, next) => {
-//     const token = req.header('Authorization');
-
-//     if (!token) {
-//         return res.status(401).send('Access denied. Token not provided.');
-//     }
-
-//     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-//         if (err) {
-//             console.error('Error decoding token:', err);
-//             return res.status(403).send('Invalid token.');
-//         }
-
-//         console.log('Decoded Token:', decoded);
-
-//         req.user = decoded;
-//         next();
-//     });
-// };
 const authenticateToken = (req, res, next) => {
     const token = req.header('Authorization');
 
@@ -75,6 +55,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -86,6 +67,7 @@ router.post('/login', async (req, res) => {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
+        
 
         if (!passwordMatch) {
             return res.status(401).send('Invalid password');
@@ -93,7 +75,7 @@ router.post('/login', async (req, res) => {
 
         // Generate a JWT token
         const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        console.log('JWT Secret Key:', JWT_SECRET);
+        // console.log('JWT Secret Key:', JWT_SECRET);
 
         // Return the token and user details for a successful login
         return res.status(200).json({

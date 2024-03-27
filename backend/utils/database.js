@@ -8,14 +8,6 @@ const connectDatabase = async () => {
       useUnifiedTopology: true,
     });
 
-    // Drop the existing index if needed
-    await Hotel.collection.dropIndex('location_1');
-
-    // Create the new index
-    await Hotel.collection.createIndex(
-      { location: 1 },
-      { unique: false, partialFilterExpression: { location: { $exists: true } } }
-    );
 
     console.log('Connected to the database');
   } catch (error) {

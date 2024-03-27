@@ -8,7 +8,12 @@ class OfficeController extends GetxController {
   final String baseUrl = ApiConstants.baseUrl;
 
   RxList<Office> offices = <Office>[].obs;
+  List<Office> originalOffices = []; // Add this line to store original data
 
+void updateOffices(List<Office> updatedOffices) {
+    offices.clear();
+    offices.addAll(updatedOffices);
+  }
   Future<void> uploadOffice({
     required String title,
     required String description,
@@ -52,6 +57,8 @@ class OfficeController extends GetxController {
   }
 
   Future<void> fetchOffices() async {
+      originalOffices.clear(); // Clear originalOffices before fetching new data
+
     try {
       final response = await http.get(Uri.parse('$baseUrl/office'));
 
@@ -67,6 +74,8 @@ class OfficeController extends GetxController {
               throw Exception('Error parsing office data: $e');
             }
           }).toList());
+            originalOffices.addAll(offices);
+
         } else {
           print('Failed to load offices: Invalid data format');
           throw Exception('Failed to load offices: Invalid data format');

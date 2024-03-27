@@ -1,5 +1,3 @@
-// owner_dashboard.dart
-
 import 'package:flutter/material.dart';
 import 'package:new_journey/Screens/drawer.dart';
 import 'package:new_journey/controllers/controllers.dart';

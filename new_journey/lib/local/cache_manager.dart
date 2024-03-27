@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CacheManager {
@@ -34,6 +35,7 @@ class CacheManager {
   String? getAccessToken() {
     return box.read('accessToken');
   }
+  
 
   Future<void> removeAccessToken() async {
     await box.remove('accessToken');

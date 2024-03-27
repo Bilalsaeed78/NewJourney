@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Room = require('../models/roommodel'); 
+const authenticateToken = require('./users'); 
 
 // Route to get all rooms
 router.get('/', async (req, res) => {
@@ -72,5 +73,29 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+// router.post('/', authenticateToken, async (req, res) => {
+//   try {
+//     const { userId } = req.user; // Retrieve user ID from authenticated user
+//     const { title, description, price, location, phoneNumber, wifiAvailability, generatorBackup } = req.body;
+    
+//     const newRoom = new Room({
+//       userId, // Associate user ID with the uploaded room
+//       title,
+//       description,
+//       price,
+//       location,
+//       phoneNumber,
+//       wifiAvailability,
+//       generatorBackup,
+//     });
+
+//     const savedRoom = await newRoom.save();
+//     res.status(201).json(savedRoom);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
 
 module.exports = router;
